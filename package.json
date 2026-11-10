@@ -1,0 +1,10 @@
+{
+  "name": "sport_venue_near_me",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@alpinejs/csp": "^3.14.9",
+    "esbuild": "^0.28.1",
+    "hanami-assets": "^3.0.0"
+  }
+}

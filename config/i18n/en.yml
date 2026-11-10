@@ -1,0 +1,19 @@
+en:
+  map:
+    search_buffer: "Search buffer"
+    searching: "Searching for venues..."
+    no_venues_found: "No venues found in this area"
+    venues_found: "Found %{count} venues"
+    geolocation:
+      requesting: "Requesting your location..."
+      not_supported: "Geolocation not supported by browser"
+      permission_denied: "Location permission denied"
+      unavailable: "Location information unavailable"
+      timeout: "Location request timed out"
+      fallback: "%{reason}. Showing York, UK."
+    you_are_here: "You are here"
+    source: "Source"
+    updated_today: "Updated today"
+    updated_days_ago: "Updated %{count} days ago"
+    error: "Error: %{message}"
+    instructions: "Use the drawing tools (top right) to search for venues nearby"

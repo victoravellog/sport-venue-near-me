@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1
+FROM ruby:3.4-slim
+
+ENV LANG=C.UTF-8 \
+    BUNDLE_PATH=/usr/local/bundle \
+    HANAMI_ENV=development
+
+RUN apt-get update -qq \
+ && apt-get install -y --no-install-recommends \
+      build-essential libpq-dev git curl postgresql-client nodejs npm \
+ && rm -rf /var/lib/apt/lists/*
+
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+RUN (getent group "${HOST_GID}" || groupadd -g "${HOST_GID}" app) \
+ && useradd -u "${HOST_UID}" -g "${HOST_GID}" -m -s /bin/bash app
+
+WORKDIR /app
+RUN chown -R "${HOST_UID}:${HOST_GID}" /app /usr/local/bundle
+
+USER app
+
+COPY --chown=${HOST_UID}:${HOST_GID} Gemfile Gemfile.lock ./
+RUN bundle install
+
+COPY --chown=${HOST_UID}:${HOST_GID} package.json ./
+RUN npm install
+
+COPY --chown=${HOST_UID}:${HOST_GID} . .
+
+EXPOSE 2300
+CMD ["bundle", "exec", "hanami", "server", "--host", "0.0.0.0"]

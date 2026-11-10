@@ -1,0 +1,51 @@
+require:
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "config/**/*"
+    - "bin/**/*"
+    - "node_modules/**/*"
+    - "public/**/*"
+    - "tmp/**/*"
+    - "log/**/*"
+    - "vendor/**/*" # CI installs gems here (bundler-cache); don't lint third-party code
+
+# Hanami's generated code and conventions use double-quoted strings.
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# Hanami files use blocks and module nesting idiomatically.
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "config/**/*"
+
+Metrics/ParameterLists:
+  Exclude:
+    - "spec/**/*"
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - "spec/**/*" # request/repo specs carry long GeoJSON literals
+
+# Hanami specs mirror app/ directly (spec/repos/…), not spec/<app_namespace>/….
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+# Request and repo specs legitimately assert status + body together.
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 20

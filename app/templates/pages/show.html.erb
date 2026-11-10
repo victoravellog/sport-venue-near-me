@@ -1,0 +1,44 @@
+<div class="map-wrapper"
+     x-data="venueMap"
+     data-default-lat="53.96"
+     data-default-lng="-1.08"
+     data-api-url="/api/v1/venues/search"
+     data-buffer="500"
+     data-t-searching="<%= t("map.searching") %>"
+     data-t-no-venues="<%= t("map.no_venues_found") %>"
+     data-t-venues-found="<%= t("map.venues_found", count: "__COUNT__") %>"
+     data-t-you-are-here="<%= t("map.you_are_here") %>"
+     data-t-requesting-location="<%= t("map.geolocation.requesting") %>"
+     data-t-fallback="<%= t("map.geolocation.fallback", reason: "__REASON__") %>"
+     data-t-source="<%= t("map.source") %>"
+     data-t-updated-today="<%= t("map.updated_today") %>"
+     data-t-updated-days-ago="<%= t("map.updated_days_ago", count: "__COUNT__") %>">
+
+  <div x-ref="container" class="map-container"></div>
+
+  <div class="map-controls">
+    <label for="buffer-range"><%= t("map.search_buffer") %>:</label>
+    <input type="range"
+           id="buffer-range"
+           min="100"
+           max="5000"
+           step="100"
+           x-model.number="buffer">
+    <span x-text="bufferLabel">500 m</span>
+  </div>
+
+  <div class="map-status"
+       :class="statusClass"
+       x-show="statusVisible"
+       x-cloak>
+    <span x-text="statusMessage"></span>
+    <button x-show="isError"
+            class="retry-button"
+            type="button"
+            @click="retrySearch">Retry</button>
+  </div>
+
+  <div class="map-instructions">
+    <p><%= t("map.instructions") %></p>
+  </div>
+</div>

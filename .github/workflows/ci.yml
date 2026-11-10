@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      HANAMI_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/svnm_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # pg needs libpq headers and rgeo builds against GEOS, so these must be
+      # present before bundle install. The PostgreSQL 17 client must match the
+      # PG17 server: `hanami db prepare` shells out to psql/createdb, and the
+      # structure.sql dump uses PG17-only settings (e.g. transaction_timeout).
+      - name: Install system dependencies (incl. PostgreSQL 17 client)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-common libpq-dev libgeos-dev
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install JS deps and compile assets
+        run: |
+          npm ci
+          bundle exec hanami assets compile
+
+      - name: Prepare the database (create, enable PostGIS, migrate)
+        run: bundle exec hanami db prepare
+
+      - name: Run tests
+        run: bundle exec rspec
+
+      - name: Run linter
+        run: bundle exec rubocop
