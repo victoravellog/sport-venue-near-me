@@ -1,5 +1,7 @@
 # Sport Venue Near Me
 
+[![CI](https://github.com/victoravellog/sport-venue-near-me/actions/workflows/ci.yml/badge.svg)](https://github.com/victoravellog/sport-venue-near-me/actions/workflows/ci.yml)
+
 A Hanami 3 + PostGIS application that answers "What sports venues are near me?" It serves a
 server-rendered UI with an interactive map and a versioned JSON API. No authentication (anonymous use).
 
